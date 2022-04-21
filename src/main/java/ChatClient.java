@@ -76,11 +76,12 @@ public class ChatClient extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        try {
+       try {
             // TODO add your handling code here:
             socket = new Socket("localhost", 5678);
             scanner = new Scanner(socket.getInputStream());
             writer = new PrintWriter(socket.getOutputStream());
+            ClientThread clientThread = new ClientThread();
             Thread myThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -93,10 +94,12 @@ public class ChatClient extends javax.swing.JFrame {
             });
             myThread.start();
 
-
         } catch (IOException ex) {
             Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
         }
+     /*   ClientThread clientThread = new ClientThread();
+        clientThread.setjTextArea(jTextAreaChat);
+        clientThread.run();*/
 
     }//GEN-LAST:event_formWindowOpened
 
