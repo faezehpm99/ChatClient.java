@@ -1,27 +1,30 @@
+package massenger;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import encrypt.MerkleHelman;
+import utilities.Time;
+
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
-
 /**
  *
  * @author faezehpirmohammadi
  */
-public class ChatServer extends javax.swing.JFrame {
+public class ChatClient extends javax.swing.JFrame {
 
     /**
-     * Creates new form ChatClient
+     * Creates new form Massenger.ChatClient
      */
-    public ChatServer() {
+    public ChatClient() {
         initComponents();
     }
 
@@ -78,34 +81,42 @@ public class ChatServer extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
-        try {
+       try {
             // TODO add your handling code here:
-            serverSocket = new ServerSocket(5678);
-            socket = serverSocket.accept();
-            scaner = new Scanner(socket.getInputStream());
-            writer=new PrintWriter(socket.getOutputStream(),true);
-           Thread myThread = new Thread(new Runnable() {
-               @Override
-               public void run() {
-                   while(true){
-                       String massage = scaner.nextLine();
-                       jTextAreaChat.append(massage +'\n');
-                   }
-               }
-           });
-         myThread.start();
-             
+            socket = new Socket("localhost", 5678);
+            scanner = new Scanner(socket.getInputStream());
+            writer = new PrintWriter(socket.getOutputStream());
+
+            Thread myThread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    while (true) {
+                        String response = merkleHelman.decryptMsg(scanner.nextLine());
+                        String time =response.substring(0,7);
+                        String massage=response.substring(8);
+                        jTextAreaChat.append(massage +'\t'+time +'\n');
+
+                    }
+                }
+            });
+            myThread.start();
+
         } catch (IOException ex) {
-            Logger.getLogger(ChatServer.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ChatClient.class.getName()).log(Level.SEVERE, null, ex);
         }
+
+
+
+
     }//GEN-LAST:event_formWindowOpened
 
     private void jButtonSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSendActionPerformed
         // TODO add your handling code here:
-       String massage = jTextAreaMessage.getText();
-       writer.println(massage);
-       jTextAreaMessage.setText(" ");
-       
+        time = new Time();
+        String massage = jTextAreaMessage.getText();
+        writer.println( merkleHelman.encryptMsg(time.getTime()+massage));
+        jTextAreaMessage.setText(" ");
+        writer.flush();
     }//GEN-LAST:event_jButtonSendActionPerformed
 
     /**
@@ -138,15 +149,17 @@ public class ChatServer extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new ChatServer().setVisible(true);
+                new ChatClient().setVisible(true);
             }
         });
     }
-    
-    private ServerSocket serverSocket;
     private Socket socket;
-    private Scanner scaner;
+    private Scanner scanner;
     private PrintWriter writer;
+    Time time ;
+    MerkleHelman merkleHelman = new MerkleHelman();
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonSend;
     private javax.swing.JPanel jPanel1;
