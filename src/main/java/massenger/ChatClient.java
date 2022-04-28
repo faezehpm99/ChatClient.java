@@ -6,15 +6,9 @@ import java.net.Socket;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import encrypt.MerkleHelman;
 import utilities.Time;
 
-
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 /**
  *
  * @author faezehpirmohammadi
@@ -43,6 +37,7 @@ public class ChatClient extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextAreaMessage = new javax.swing.JTextArea();
         jButtonSend = new javax.swing.JButton();
+        deleteMsg = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Client");
@@ -53,6 +48,7 @@ public class ChatClient extends javax.swing.JFrame {
         });
         getContentPane().setLayout(new java.awt.BorderLayout(10, 10));
 
+        jTextAreaChat.setBackground(new java.awt.Color(204, 204, 204));
         jTextAreaChat.setColumns(20);
         jTextAreaChat.setRows(5);
         jScrollPane1.setViewportView(jTextAreaChat);
@@ -61,13 +57,16 @@ public class ChatClient extends javax.swing.JFrame {
 
         jPanel1.setLayout(new java.awt.BorderLayout(10, 10));
 
+        jTextAreaMessage.setBackground(new java.awt.Color(204, 204, 204));
         jTextAreaMessage.setColumns(20);
-        jTextAreaMessage.setRows(5);
+        jTextAreaMessage.setRows(3);
+        jTextAreaMessage.setTabSize(5);
         jScrollPane2.setViewportView(jTextAreaMessage);
 
         jPanel1.add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
-        jButtonSend.setText("Send");
+        jButtonSend.setBackground(new java.awt.Color(204, 255, 255));
+        jButtonSend.setIcon(new javax.swing.ImageIcon("/Users/faezehpirmohammadi/Desktop/Massenger/src/main/java/img/send.png")); // NOI18N
         jButtonSend.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonSendActionPerformed(evt);
@@ -75,9 +74,19 @@ public class ChatClient extends javax.swing.JFrame {
         });
         jPanel1.add(jButtonSend, java.awt.BorderLayout.LINE_END);
 
+        deleteMsg.setBackground(new java.awt.Color(255, 204, 204));
+        deleteMsg.setIcon(new javax.swing.ImageIcon("/Users/faezehpirmohammadi/Desktop/Massenger/src/main/java/img/icons8-delete-100-2.png")); // NOI18N
+        deleteMsg.setText("DeleteAll");
+        deleteMsg.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                deleteMsgActionPerformed(evt);
+            }
+        });
+        jPanel1.add(deleteMsg, java.awt.BorderLayout.PAGE_END);
+
         getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_END);
 
-        setBounds(0, 0, 472, 393);
+        setBounds(0, 0, 531, 587);
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
@@ -118,6 +127,12 @@ public class ChatClient extends javax.swing.JFrame {
         jTextAreaMessage.setText(" ");
         writer.flush();
     }//GEN-LAST:event_jButtonSendActionPerformed
+
+    private void deleteMsgActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteMsgActionPerformed
+        // TODO add your handling code here:
+        jTextAreaChat.replaceSelection("");
+        jTextAreaChat.setText("");
+    }//GEN-LAST:event_deleteMsgActionPerformed
 
     /**
      * @param args the command line arguments
@@ -161,6 +176,7 @@ public class ChatClient extends javax.swing.JFrame {
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton deleteMsg;
     private javax.swing.JButton jButtonSend;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
