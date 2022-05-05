@@ -198,7 +198,6 @@ public class ChatServer extends javax.swing.JFrame {
     private Time time;
     private MerkleHelman merkleHelman = new MerkleHelman();
 
-    private ArrayList<ClientHandler>handlers = new ArrayList<>();
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonSend;
     private javax.swing.JButton jDeleteBtn;
