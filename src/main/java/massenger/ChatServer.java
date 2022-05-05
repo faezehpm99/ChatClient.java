@@ -1,16 +1,21 @@
 package massenger;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import encrypt.MerkleHelman;
 import utilities.Time;
+
+import javax.swing.*;
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -40,29 +45,22 @@ public class ChatServer extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jTextAreaChat = new javax.swing.JTextArea();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextAreaMessage = new javax.swing.JTextArea();
         jButtonSend = new javax.swing.JButton();
         jDeleteBtn = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        MassageList = new javax.swing.JList<>();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("SERVER");
+        setTitle("Client");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 formWindowOpened(evt);
             }
         });
         getContentPane().setLayout(new java.awt.BorderLayout(10, 10));
-
-        jTextAreaChat.setBackground(new java.awt.Color(204, 204, 204));
-        jTextAreaChat.setColumns(20);
-        jTextAreaChat.setRows(5);
-        jScrollPane1.setViewportView(jTextAreaChat);
-
-        getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
 
         jPanel1.setLayout(new java.awt.BorderLayout(10, 10));
 
@@ -76,7 +74,8 @@ public class ChatServer extends javax.swing.JFrame {
         jPanel1.add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
         jButtonSend.setBackground(new java.awt.Color(204, 255, 255));
-       // jButtonSend.setIcon(new javax.swing.ImageIcon(getClass().getResource("/massenger/send.png"))); // NOI18N
+        jButtonSend.setText("SEND");
+        //jButtonSend.setIcon(new javax.swing.ImageIcon(getClass().getResource("/massenger/send.png"))); // NOI18N
         jButtonSend.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonSendActionPerformed(evt);
@@ -95,6 +94,18 @@ public class ChatServer extends javax.swing.JFrame {
         jPanel1.add(jDeleteBtn, java.awt.BorderLayout.PAGE_END);
 
         getContentPane().add(jPanel1, java.awt.BorderLayout.PAGE_END);
+       /* if(data!=null){
+            MassageList.setListData(data);
+
+        }*/
+       /* MassageList.setModel(new javax.swing.AbstractListModel<String>() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public String getElementAt(int i) { return strings[i]; }
+        });*/
+        jScrollPane3.setViewportView(MassageList);
+
+        getContentPane().add(jScrollPane3, java.awt.BorderLayout.CENTER);
 
         setBounds(0, 0, 545, 581);
     }// </editor-fold>//GEN-END:initComponents
@@ -108,6 +119,7 @@ public class ChatServer extends javax.swing.JFrame {
             socket = serverSocket.accept();
             scanner = new Scanner(socket.getInputStream());
             writer=new PrintWriter(socket.getOutputStream(),true);
+            data = new Vector();
            Thread myThread = new Thread(new Runnable() {
                @Override
                public void run() {
@@ -116,13 +128,28 @@ public class ChatServer extends javax.swing.JFrame {
                        String decMassage=merkleHelman.decryptMsg(response);
                        String time=decMassage.substring(0,7);
                        String massage=decMassage.substring(8);
-                       jTextAreaChat.append(massage +'\t'+time +'\n');
+                       data.addElement("server:"+" " +massage+'\t'+time+'\n');
+                       MassageList.setListData(data);
+
 
                    }
                }
            });
          myThread.start();
-
+            MassageList.addMouseListener(new MouseAdapter() {
+                public void mouseClicked(MouseEvent me) {
+                    if (me.getClickCount() == 1) {
+                        JList target = (JList)me.getSource();
+                        int index = target.locationToIndex(me.getPoint());
+                        if (index >= 0) {
+                            Object item = target.getModel().getElementAt(index);
+                            JOptionPane.showMessageDialog(null, "DeletePermanently");
+                            data.remove(index);
+                            MassageList.setListData(data);
+                        }
+                    }
+                }
+            });
           //  ServerThread serverThread = new ServerThread();
              
         } catch (IOException ex) {
@@ -134,21 +161,22 @@ public class ChatServer extends javax.swing.JFrame {
 
             ClientHandler handler = new ClientHandler(serverSocket,socket, scanner,writer,time,merkleHelman,jTextAreaMessage);
              handler.run();
-           // handler.run();
+        time = new Time();
+        String massage = jTextAreaMessage.getText();
+
+            writer.println( merkleHelman.encryptMsg(time.getTime()+massage));
+            jTextAreaMessage.setText(" ");
+            writer.flush();
 
 
 
-        //serverThread.run();
-      /* time = new Time();
-       String massage = jTextAreaMessage.getText();
-       writer.println(merkleHelman.encryptMsg(time.getTime()+massage));
-       jTextAreaMessage.setText(" ");*/
-       
     }//GEN-LAST:event_jButtonSendActionPerformed
 
     private void jDeleteBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jDeleteBtnActionPerformed
         // TODO add your handling code here:
-        jTextAreaChat.setText(merkleHelman.encryptMsg(""));
+        data.removeAllElements();
+        MassageList.setListData(data);
+
     }//GEN-LAST:event_jDeleteBtnActionPerformed
 
                                            
@@ -197,14 +225,15 @@ public class ChatServer extends javax.swing.JFrame {
     private PrintWriter writer;
     private Time time;
     private MerkleHelman merkleHelman = new MerkleHelman();
-
+    private ArrayList<ClientHandler>clientHandlers= new ArrayList<>();
+    private Vector data;
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JList<String> MassageList;
     private javax.swing.JButton jButtonSend;
     private javax.swing.JButton jDeleteBtn;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTextArea jTextAreaChat;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTextArea jTextAreaMessage;
     // End of variables declaration//GEN-END:variables
 }
