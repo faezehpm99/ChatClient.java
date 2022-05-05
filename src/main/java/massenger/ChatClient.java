@@ -116,7 +116,7 @@ public class ChatClient extends javax.swing.JFrame {
                         String response = merkleHelman.decryptMsg(scanner.nextLine());
                         String time =response.substring(0,7);
                         String massage=response.substring(8);
-                        data.addElement( massage+'\t'+time+'\n');
+                        data.addElement("server:"+" " +massage+'\t'+time+'\n');
                         massageList.setListData(data);
 
                     }
