@@ -27,11 +27,6 @@ public class ChatServer extends javax.swing.JFrame {
      */
     public ChatServer() {
         initComponents();
-        try {
-            serverSocket = new ServerSocket(5678);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
 
     }
@@ -52,10 +47,9 @@ public class ChatServer extends javax.swing.JFrame {
         jTextAreaMessage = new javax.swing.JTextArea();
         jButtonSend = new javax.swing.JButton();
         jDeleteBtn = new javax.swing.JButton();
-        jButtonSend.setIcon(new javax.swing.ImageIcon("/Users/faezehpirmohammadi/Desktop/Massenger/src/main/java/img/send.png"));
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Server");
+        setTitle("SERVER");
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowOpened(java.awt.event.WindowEvent evt) {
                 formWindowOpened(evt);
@@ -82,7 +76,7 @@ public class ChatServer extends javax.swing.JFrame {
         jPanel1.add(jScrollPane2, java.awt.BorderLayout.CENTER);
 
         jButtonSend.setBackground(new java.awt.Color(204, 255, 255));
-        //jButtonSend.setIcon(new javax.swing.ImageIcon(getClass().getResource("/massenger/send.png"))); // NOI18N
+       // jButtonSend.setIcon(new javax.swing.ImageIcon(getClass().getResource("/massenger/send.png"))); // NOI18N
         jButtonSend.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonSendActionPerformed(evt);
@@ -91,7 +85,6 @@ public class ChatServer extends javax.swing.JFrame {
         jPanel1.add(jButtonSend, java.awt.BorderLayout.LINE_END);
 
         jDeleteBtn.setBackground(new java.awt.Color(255, 204, 204));
-        jDeleteBtn.setIcon(new javax.swing.ImageIcon("/Users/faezehpirmohammadi/Desktop/Massenger/src/main/java/img/icons8-delete-100-2.png"));
        // jDeleteBtn.setIcon(new javax.swing.ImageIcon(getClass().getResource("/img/icons8-delete-100-2.png"))); // NOI18N
         jDeleteBtn.setText("DeleteAll");
         jDeleteBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -111,9 +104,9 @@ public class ChatServer extends javax.swing.JFrame {
 
         try {
             // TODO add your handling code here:
-
-           socket = serverSocket.accept();
-           scanner = new Scanner(socket.getInputStream());
+            serverSocket = new ServerSocket(5678);
+            socket = serverSocket.accept();
+            scanner = new Scanner(socket.getInputStream());
             writer=new PrintWriter(socket.getOutputStream(),true);
            Thread myThread = new Thread(new Runnable() {
                @Override
@@ -140,8 +133,8 @@ public class ChatServer extends javax.swing.JFrame {
     private void jButtonSendActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonSendActionPerformed
 
             ClientHandler handler = new ClientHandler(serverSocket,socket, scanner,writer,time,merkleHelman,jTextAreaMessage);
-
-            handler.run();
+             handler.run();
+           // handler.run();
 
 
 
@@ -157,6 +150,8 @@ public class ChatServer extends javax.swing.JFrame {
         // TODO add your handling code here:
         jTextAreaChat.setText(merkleHelman.encryptMsg(""));
     }//GEN-LAST:event_jDeleteBtnActionPerformed
+
+                                           
 
     /**
      * @param args the command line arguments
@@ -202,7 +197,7 @@ public class ChatServer extends javax.swing.JFrame {
     private PrintWriter writer;
     private Time time;
     private MerkleHelman merkleHelman = new MerkleHelman();
-    private static ExecutorService pool;
+
     private ArrayList<ClientHandler>handlers = new ArrayList<>();
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonSend;

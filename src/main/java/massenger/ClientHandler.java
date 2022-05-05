@@ -15,11 +15,11 @@ public class ClientHandler implements Runnable{
     private ServerSocket serverSocket;
     private Socket socket;
     private Scanner scaner;
-    private  PrintWriter writer;
+    private PrintWriter writer;
     private Time time;
     private MerkleHelman merkleHelman = new MerkleHelman();
     private JTextArea jTextArea;
-    private static ArrayList<ClientHandler> clientHandlers= new ArrayList<>();
+    private ArrayList<ClientHandler> clientHandlers= new ArrayList<>();
 
     public ClientHandler(ServerSocket serverSocket, Socket socket,
                          Scanner scaner, PrintWriter writer,
@@ -35,23 +35,26 @@ public class ClientHandler implements Runnable{
         clientHandlers.add(this);
 
 
+
     }
 
     @Override
     public void run() {
             time = new Time();
             String massage = jTextArea.getText();
-
-        for (ClientHandler clientHandler:clientHandlers) {
-            clientHandler.writer.println(merkleHelman.encryptMsg(time.getTime()+massage));
-            clientHandler.writer.flush();
-            clientHandler.writer.close();
-        }
-
+            String encryptedMassage=merkleHelman.encryptMsg(time.getTime()+massage);
+            writer.println(merkleHelman.encryptMsg(time.getTime()+massage));
+            //printToAllClients(encryptedMassage);
             jTextArea.setText(" ");
+
 
     }
 
+  /*  private void printToAllClients(String massage) {
+        for (ClientHandler ch:clientHandlers) {
+            ch.writer.println(merkleHelman.encryptMsg(time.getTime()+massage));
+        }
+    }*/
 
 
 }
